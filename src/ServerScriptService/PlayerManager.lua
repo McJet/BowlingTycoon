@@ -3,19 +3,19 @@ local DataStoreService = game:GetService("DataStoreService")
 local PlayerData = DataStoreService:GetDataStore("PlayerData")
 
 --[[ DEBUG VARIABLES ]]
-local RESET_DATA = false  --default value: false
+local RESET_DATA = false  --default: false, set to true to reset data of every player that joins
 local RESET_DATA_MONEY_VALUE = 100
 --[[ DEBUG VARIABLES END]]
 
 local function LeaderboardSetup(value)
 	local leaderstats = Instance.new("Folder")
 	leaderstats.Name = "leaderstats"
-	
+
 	local money = Instance.new("IntValue")
 	money.Name = "Money"
 	money.Value = value
 	money.Parent = leaderstats
-	
+
 	return leaderstats
 end
 
@@ -47,7 +47,7 @@ local playerRemoving = Instance.new("BindableEvent")
  Key: Player's UserId
  Value: Data
 --]]
-local sessionData = {} 
+local sessionData = {}
 local PlayerManager = {}
 
 PlayerManager.PlayerAdded = playerAdded.Event
@@ -57,10 +57,10 @@ function PlayerManager.Start()
 	for _, player in ipairs(Players:GetPlayers()) do
 		coroutine.wrap(PlayerManager.OnPlayerAdded)(player) --make sure every player is loaded in correctly
 	end
-	
+
 	Players.PlayerAdded:Connect(PlayerManager.OnPlayerAdded)
 	Players.PlayerRemoving:Connect(PlayerManager.OnPlayerRemoving)
-	
+
 	game:BindToClose(PlayerManager.OnClose)
 end
 
@@ -69,10 +69,10 @@ function PlayerManager.OnPlayerAdded(player)
 	player.CharacterAdded:Connect(function(character)
 		PlayerManager.OnCharacterAdded(player, character)
 	end)
-	
+
 	-- load player data
 	local success, data = LoadData(player)
-	if not RESET_DATA then 
+	if not RESET_DATA then
 		sessionData[player.UserId] = success and data or {
 			-- starting values
 			Money = 0,
@@ -89,7 +89,7 @@ function PlayerManager.OnPlayerAdded(player)
 	-- update player's leadearboard information
 	local leaderstats = LeaderboardSetup(PlayerManager.GetMoney(player))
 	leaderstats.Parent = player
-	
+
 	playerAdded:Fire(player)
 end
 
@@ -122,7 +122,7 @@ end
 
 function PlayerManager.AddUnlockId(player, id)
 	local data = sessionData[player.UserId]
-	
+
 	if not table.find(data.UnlockIds, id) then
 		table.insert(data.UnlockIds, id)
 	end
@@ -139,7 +139,7 @@ end
 
 function PlayerManager.OnClose()
 	for _, player in ipairs(Players:GetPlayers()) do
-		coroutine.wrap(PlayerManager.OnPlayerRemoving(player))() 
+		coroutine.wrap(PlayerManager.OnPlayerRemoving(player))()
 	end
 end
 

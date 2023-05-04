@@ -12,7 +12,7 @@ function Lane.new(tycoon, instance)
 	self.BallValueMultiplier = instance:GetAttribute("BallValueMultiplier")
 	self.BallTemplate = ballsFolder[instance:GetAttribute("BallType")]
 	self.BallSpawnPosition = instance.BallSpawnPosition
-	
+
 	return self
 end
 
@@ -21,10 +21,6 @@ function Lane:Init()
 	self.Prompt.Triggered:Connect(function(...)
 		self:ThrowBall(...)
 	end)
-	
-	local belt = self.Instance
-	local ballSpeed = self.BallTemplate:GetAttribute("Speed")
-	--belt.AssemblyLinearVelocity = belt.CFrame.LookVector * (self.SpeedMultiplier * ballSpeed * 10)
 end
 
 function Lane:CreatePrompt()
@@ -37,14 +33,14 @@ function Lane:CreatePrompt()
 	return prompt
 end
 
-function Lane:ThrowBall(player)	
+function Lane:ThrowBall(player)
 	if player == self.Tycoon.Owner then
-		local ball = self.BallTemplate:Clone()	
+		local ball = self.BallTemplate:Clone()
 		self.Tycoon:AddComponents(ball)
-		
+
 		ball.Position = self.BallSpawnPosition.WorldPosition
 		ball.Parent = self.Instance
-		
+
 		debris:AddItem(ball, 10)
 	end
 end

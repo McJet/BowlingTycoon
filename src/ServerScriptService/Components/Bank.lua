@@ -8,7 +8,7 @@ function Bank.new(tycoon, instance)
 	self.Tycoon = tycoon
 	self.Instance = instance
 	self.Balance = 0
-	
+
 	return self
 end
 
@@ -23,7 +23,7 @@ function Bank:Init()
 end
 
 function Bank:UpdateMoney(value)
-	self.Balance += value
+	self.Balance = self.Balance + value
 	self:SetDisplay("$" .. self.Balance)
 end
 

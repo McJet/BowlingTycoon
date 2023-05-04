@@ -7,7 +7,7 @@ function Button.new(tycoon, part)
 	local self = setmetatable({}, Button)
 	self.Tycoon = tycoon
 	self.Instance = part
-	
+
 	return self
 end
 
@@ -31,7 +31,7 @@ function Button:Press(player)
 	local id = self.Instance:GetAttribute("Id")
 	local cost = self.Instance:GetAttribute("Cost")
 	local money = PlayerManager.GetMoney(player)
-	
+
 	if player == self.Tycoon.Owner and money >= cost then
 		PlayerManager.SetMoney(player, money - cost)
 		self.Tycoon:PublishTopic("Button", id)
