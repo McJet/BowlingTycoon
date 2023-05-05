@@ -3,7 +3,7 @@
 A personal project where I create a game in Roblox using Roblox Studios.
 
 The purpose of this project is to learn a new language (Lua), create a product that I can play with my friends (The game itself), and practicing various skills: debugging, problem solving, designing, creating/writing documentation.
-tl;dr - I am doing this project to keep my coding brain sharp while having fun
+tl;dr - I am doing this project to keep my coding brain sharp while having fun!
 
 This repository only holds the Lua scripts that are found within the game files for personal version control purposes.
 Scripts are programmed with Lua.
