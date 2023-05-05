@@ -1,4 +1,4 @@
-local RemoteEvent = game.ReplicatedStorage:WaitForChild("OpenGui")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local UpgradeShop = {}
 UpgradeShop.__index = UpgradeShop
@@ -7,17 +7,23 @@ function UpgradeShop.new(tycoon, instance)
 	local self = setmetatable({}, UpgradeShop)
 	self.Tycoon = tycoon
 	self.Instance = instance
-	
+
 	return self
 end
 
 function UpgradeShop:Init()
 	self.prompt = self:CreatePrompt()
+	self.openEvent = self:CreateOpenEvent()
+	self.closeEvent = self:CreateCloseEvent()
+
 	self.prompt.Triggered:Connect(function(player)
-		self:OpenShop(player)
+		self.openEvent:FireClient(player)
 	end)
+
+	--FIXME: close shop when player moves away from the shop
+	--PromptHidden only triggers clientside
 	self.prompt.PromptHidden:Connect(function(player)
-		self:CloseShop(player)
+		self.closeEvent:FireClient(player)
 	end)
 end
 
@@ -27,12 +33,24 @@ function UpgradeShop:CreatePrompt()
 	prompt.MaxActivationDistance = 15
 	prompt.ActionText = "Open Shop"
 	prompt.Parent = self.Instance.PromptPosition
+
 	return prompt
 end
 
-function UpgradeShop:OpenShop(player)
-	print("OpenShop function called!")
-	RemoteEvent:FireClient(player)
+function UpgradeShop:CreateOpenEvent() 
+	local openShopEvent = Instance.new("RemoteEvent")
+	openShopEvent.Name = "OpenShopEvent"
+	openShopEvent.Parent = ReplicatedStorage
+
+	return openShopEvent
+end
+
+function UpgradeShop:CreateCloseEvent() 
+	local closeShopEvent = Instance.new("RemoteEvent")
+	closeShopEvent.Name = "CloseShopEvent"
+	closeShopEvent.Parent = ReplicatedStorage
+
+	return closeShopEvent
 end
 
 return UpgradeShop
