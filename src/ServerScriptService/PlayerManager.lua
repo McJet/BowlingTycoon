@@ -72,6 +72,8 @@ function PlayerManager.OnPlayerAdded(player)
 
 	-- load player data
 	local success, data = LoadData(player)
+	print("Loaded Data:")
+	print(data)
 	if not RESET_DATA then
 		sessionData[player.UserId] = success and data or {
 			-- starting values

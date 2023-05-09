@@ -14,15 +14,16 @@ local closeBallShopEvent = ReplicatedStorage:WaitForChild("CloseBallShopEvent")
 local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 local LaneShopGui = PlayerGui:WaitForChild("LaneShopGui")
 local BallShopGui = PlayerGui:WaitForChild("BallShopGui")
-local closeLaneButton = LaneShopGui.UpgradeShop.CloseButton
+
+local closeLaneButton = LaneShopGui.FullScreenFill.UpgradeShop.Header.CloseButton
 local closeBallButton = BallShopGui.UpgradeShop.CloseButton
 
 
 openLaneShopEvent.OnClientEvent:Connect(function()
-    LaneShopGui.UpgradeShop.Visible = true
+    LaneShopGui.FullScreenFill.Visible = true
 end)
 closeLaneShopEvent.OnClientEvent:Connect(function()
-    LaneShopGui.UpgradeShop.Visible = false
+    LaneShopGui.FullScreenFill.Visible = false
 end)
 
 openBallShopEvent.OnClientEvent:Connect(function()
@@ -33,7 +34,7 @@ closeBallShopEvent.OnClientEvent:Connect(function()
 end)
 
 closeLaneButton.Activated:Connect(function()
-    LaneShopGui.UpgradeShop.Visible = false
+    LaneShopGui.FullScreenFill.Visible = false
 end)
 closeBallButton.Activated:Connect(function()
     BallShopGui.UpgradeShop.Visible = false
