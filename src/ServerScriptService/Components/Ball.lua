@@ -13,14 +13,16 @@ function Ball.new(tycoon, instance)
 end
 
 function Ball:Init()
-	local vectorForce = Instance.new("VectorForce")
-	local attachment = Instance.new("Attachment")
-	attachment.Parent = self.Instance
-	vectorForce.Attachment0 = attachment
-	vectorForce.ApplyAtCenterOfMass = true
-	vectorForce.RelativeTo = Enum.ActuatorRelativeTo.World
-	vectorForce.Force = self.Instance.CFrame.LookVector * self.Speed * 10
-	vectorForce.Parent = attachment
+	self:SetVelocity()
+	self:SetRotation()
+end
+
+function Ball:SetVelocity()
+	self.Instance.AssemblyLinearVelocity = Vector3.new(1, 0, -self.Speed * 10)
+end
+
+function Ball:SetRotation()
+	self.Instance.AssemblyAngularVelocity = Vector3.new(-15, 0, 10)
 end
 
 return Ball
