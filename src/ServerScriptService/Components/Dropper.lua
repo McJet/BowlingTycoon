@@ -11,7 +11,7 @@ function Dropper.new(tycoon, instance)
 	self.Rate = instance:GetAttribute("Rate")
 	self.DropTemplate = dropsFolder[instance:GetAttribute("Drop")]
 	self.DropSpawn = instance.Spout.Spawn
-	self.IsOn = true
+	self.IsOn = false
 	
 	return self
 end

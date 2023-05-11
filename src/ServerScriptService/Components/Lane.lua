@@ -8,9 +8,6 @@ function Lane.new(tycoon, instance)
 	local self = setmetatable({}, Lane)
 	self.Tycoon = tycoon
 	self.Instance = instance
-	self.CooldownDuration = instance:GetAttribute("CooldownDuration")
-	self.BallValueMultiplier = instance:GetAttribute("BallValueMultiplier")
-	self.BallTemplate = ballsFolder[instance:GetAttribute("BallType")]
 	self.BallSpawnPosition = instance.BallSpawnPosition
 
 	return self
@@ -21,7 +18,7 @@ function Lane:Init()
 	self.Prompt.Triggered:Connect(function(...)
 		self.Prompt.Enabled = false
 		self:ThrowBall(...)
-		task.wait(self.CooldownDuration) --TODO: Show player cooldown timer
+		task.wait(self.Instance:GetAttribute("CooldownDuration")) --TODO: Show player cooldown timer
 		self.Prompt.Enabled = true
 	end)
 end
@@ -38,7 +35,13 @@ end
 
 function Lane:ThrowBall(player)
 	if player == self.Tycoon.Owner then
+		self.BallTemplate = ballsFolder[self.Instance:GetAttribute("BallType")]
+		self.BallValueMultiplier = self.Instance:GetAttribute("BallValueMultiplier")
+
 		local ball = self.BallTemplate:Clone()
+
+		local ballValue = ball:GetAttribute("Value")
+		ball:SetAttribute("Value", ballValue * self.BallValueMultiplier)
 
 		ball.Position = self.BallSpawnPosition.WorldPosition
 		ball.Parent = self.Instance
