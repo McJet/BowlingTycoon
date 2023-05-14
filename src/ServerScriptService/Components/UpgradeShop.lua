@@ -1,4 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local PlayerManager = require(script.Parent.Parent.PlayerManager)
+
 
 local UpgradeShop = {}
 UpgradeShop.__index = UpgradeShop
@@ -52,6 +54,12 @@ function UpgradeShop:CreateCloseEvent()
 	closeShopEvent.Parent = ReplicatedStorage
 
 	return closeShopEvent
+end
+
+function UpgradeShop:UpgradeLane(laneNumber, player)
+	if player == self.Tycoon.Owner then
+		self.Tycoon:PublishTopic("UpgradeLane", laneNumber, player)
+	end
 end
 
 return UpgradeShop
