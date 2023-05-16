@@ -4,7 +4,7 @@ local PlayerData = DataStoreService:GetDataStore("PlayerData")
 
 --[[ DEBUG VARIABLES ]]
 local RESET_DATA = false  --default: false, set to true to reset data of every player that joins
-local RESET_DATA_MONEY_VALUE = 10000
+local RESET_DATA_MONEY_VALUE = 100000
 --[[ DEBUG VARIABLES END]]
 
 local function LeaderboardSetup(value)
@@ -26,6 +26,7 @@ local function LoadData(player)
 	if not success then
 		warn(result)
 	end
+	print("Loaded Data:", result)
 	return success, result
 end
 
@@ -36,6 +37,7 @@ local function SaveData(player, data)
 	if not success then
 		warn(result)
 	end
+	print("Saved Data:", data)
 	return success
 end
 
@@ -72,18 +74,19 @@ function PlayerManager.OnPlayerAdded(player)
 
 	-- load player data
 	local success, data = LoadData(player)
-	print(data)
 	if not RESET_DATA then
 		sessionData[player.UserId] = success and data or {
 			-- starting values
 			Money = 0,
-			UnlockIds = {}
+			UnlockIds = {},
+			LaneTypes = {}
 		}
 	else
 		sessionData[player.UserId] = {
 			-- starting values
 			Money = RESET_DATA_MONEY_VALUE,
-			UnlockIds = {}
+			UnlockIds = {},
+			LaneTypes = {}
 		}
 	end
 
@@ -131,6 +134,15 @@ end
 
 function PlayerManager.GetUnlockIds(player)
 	return sessionData[player.UserId].UnlockIds
+end
+
+function PlayerManager.AddLaneType(player, laneNumber, laneType)
+	local laneTypesTable = sessionData[player.UserId].LaneTypes
+	laneTypesTable[laneNumber] = laneType
+end
+
+function PlayerManager.GetLaneTypes(player)
+	return sessionData[player.UserId].LaneTypes
 end
 
 function PlayerManager.OnPlayerRemoving(player)

@@ -1,7 +1,8 @@
 local ballsFolder = game:GetService("ServerStorage").Balls
 local debris = game:GetService("Debris")
-local LaneUpgrades = require(script.Parent.Parent.LaneUpgrades)
-local UpgradeOrder = require(game:GetService("ReplicatedStorage").Source.UpgradeOrder)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LaneUpgrades = require(ReplicatedStorage.Source.LaneUpgrades)
+local UpgradeOrder = require(ReplicatedStorage.Source.UpgradeOrder)
 local PlayerManager = require(script.Parent.Parent.PlayerManager)
 
 
@@ -14,7 +15,8 @@ function Lane.new(tycoon, instance)
 	self.Instance = instance
 	self.BallSpawnPosition = instance.BallSpawnPosition
 	self.LaneNumber = instance:GetAttribute("LaneNumber")
-	print(self.LaneNumber)
+	self:LoadLaneType(tycoon.Owner)
+	self:SaveLaneInfo(instance:GetAttribute("LaneNumber"), tycoon.Owner)
 
 	return self
 end
@@ -29,6 +31,7 @@ function Lane:Init()
 	end)
 	self.Subscription = self.Tycoon:SubscribeTopic("UpgradeLane", function(...)
 		self:UpgradeLane(...)
+		self:SaveLaneInfo(...)
 	end)
 end
 
@@ -69,12 +72,31 @@ function Lane:UpgradeLane(laneNumber, player)
 	
 		if playerMoney >= upgradeCost then
 			PlayerManager.SetMoney(player, playerMoney - upgradeCost)
-		
-			self.Instance:SetAttribute("LaneType", nextLaneTier)
-			self.Instance:SetAttribute("BallValueMultiplier", nextLaneInfo["BallValueMultiplier"])
-			self.Instance:SetAttribute("CooldownDuration", nextLaneInfo["CooldownDuration"])
+			self:SetLaneAttributes(nextLaneTier, nextLaneInfo["BallValueMultiplier"], nextLaneInfo["CooldownDuration"])
 			print("Upgraded", self.LaneNumber)
 		end
+	end
+end
+
+function Lane:SetLaneAttributes(laneType, ballValueMultiplier, cooldownDuration)
+	self.Instance:SetAttribute("LaneType", laneType)
+	self.Instance:SetAttribute("BallValueMultiplier", ballValueMultiplier)
+	self.Instance:SetAttribute("CooldownDuration", cooldownDuration)
+end
+
+function Lane:SaveLaneInfo(laneNumber, player)
+	if laneNumber == self.LaneNumber and player == self.Tycoon.Owner then
+		PlayerManager.AddLaneType(player, laneNumber, self.Instance:GetAttribute("LaneType"))
+	end
+end
+
+function Lane:LoadLaneType(player)
+	local savedLaneTypesList = PlayerManager.GetLaneTypes(player)
+	local savedLaneType = savedLaneTypesList[self.LaneNumber]
+
+	if savedLaneType then
+		local laneInfo = LaneUpgrades.getUpgradeInfo(savedLaneType)
+		self:SetLaneAttributes(savedLaneType, laneInfo["BallValueMultiplier"], laneInfo["CooldownDuration"])
 	end
 end
 
