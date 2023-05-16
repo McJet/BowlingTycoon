@@ -4,7 +4,7 @@ local PlayerData = DataStoreService:GetDataStore("PlayerData")
 
 --[[ DEBUG VARIABLES ]]
 local RESET_DATA = false  --default: false, set to true to reset data of every player that joins
-local RESET_DATA_MONEY_VALUE = 100
+local RESET_DATA_MONEY_VALUE = 10000
 --[[ DEBUG VARIABLES END]]
 
 local function LeaderboardSetup(value)
@@ -72,6 +72,7 @@ function PlayerManager.OnPlayerAdded(player)
 
 	-- load player data
 	local success, data = LoadData(player)
+	print(data)
 	if not RESET_DATA then
 		sessionData[player.UserId] = success and data or {
 			-- starting values

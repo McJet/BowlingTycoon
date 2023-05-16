@@ -1,21 +1,39 @@
+--[[
+this local script is in charge of sending/receiving open/close UI events to the server.
+]]
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
-local openShopEvent = ReplicatedStorage:WaitForChild("OpenShopEvent")
-local closeShopEvent = ReplicatedStorage:WaitForChild("CloseShopEvent")
+local openLaneShopEvent = ReplicatedStorage:WaitForChild("OpenLaneShopEvent")
+local closeLaneShopEvent = ReplicatedStorage:WaitForChild("CloseLaneShopEvent")
+
+local openBallShopEvent = ReplicatedStorage:WaitForChild("OpenBallShopEvent")
+local closeBallShopEvent = ReplicatedStorage:WaitForChild("CloseBallShopEvent")
 
 local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
-local UpgradeShopGui = PlayerGui:WaitForChild("UpgradeShopGui")
-local closeButton = UpgradeShopGui.UpgradeShop.CloseButton
+local LaneShopGui = PlayerGui:WaitForChild("LaneShopGui")
+local BallShopGui = PlayerGui:WaitForChild("BallShopGui")
 
-openShopEvent.OnClientEvent:Connect(function()
-    UpgradeShopGui.UpgradeShop.Visible = true
+local closeLaneButton = LaneShopGui.FullScreenFill.UpgradeShop.Header.CloseButton
+local closeBallButton = BallShopGui.UpgradeShop.CloseButton
+
+openLaneShopEvent.OnClientEvent:Connect(function()
+    LaneShopGui.FullScreenFill.Visible = true
+end)
+closeLaneShopEvent.OnClientEvent:Connect(function()
+    LaneShopGui.FullScreenFill.Visible = false
+end)
+closeLaneButton.Activated:Connect(function()
+    LaneShopGui.FullScreenFill.Visible = false
 end)
 
-closeShopEvent.OnClientEvent:Connect(function()
-    UpgradeShopGui.UpgradeShop.Visible = false
+openBallShopEvent.OnClientEvent:Connect(function()
+    BallShopGui.UpgradeShop.Visible = true
 end)
-
-closeButton.Activated:Connect(function()
-    UpgradeShopGui.UpgradeShop.Visible = false
+closeBallShopEvent.OnClientEvent:Connect(function()
+    BallShopGui.UpgradeShop.Visible = false
+end)
+closeBallButton.Activated:Connect(function()
+    BallShopGui.UpgradeShop.Visible = false
 end)
