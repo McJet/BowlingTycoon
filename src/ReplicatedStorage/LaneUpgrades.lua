@@ -45,7 +45,7 @@ local LaneUpgrades = {
     ["Developer"] = {}
 }
 
-function LaneUpgrades.getUpgradeInfo(name)
+function LaneUpgrades.getTierInfo(name)
     if LaneUpgrades[name] then
         return LaneUpgrades[name]
     end

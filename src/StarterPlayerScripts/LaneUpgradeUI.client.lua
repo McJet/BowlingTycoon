@@ -1,6 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local UpdateLaneInfoEvent = ReplicatedStorage:WaitForChild("UpdateLaneInfoEvent")
+local LaneUpgrades = require(ReplicatedStorage.Source.LaneUpgrades)
+local UpgradeOrder = require(ReplicatedStorage.Source.UpgradeOrder)
 
 local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 local LaneShopGui = PlayerGui:WaitForChild("LaneShopGui")
@@ -30,8 +32,17 @@ openLaneShopEvent.OnClientEvent:Connect(function()
     LaneShopGui.FullScreenFill.Visible = true
 end)
 
-function GetLaneInformation() 
+closeLaneShopEvent.OnClientEvent:Connect(function()
+    LaneShopGui.FullScreenFill.Visible = false
+end)
+
+closeLaneButton.Activated:Connect(function()
+    LaneShopGui.FullScreenFill.Visible = false
+end)
+
+function GetLaneInformation()
     local info = UpdateLaneInfoEvent:InvokeServer()
+
     return info
 end
 
@@ -39,36 +50,47 @@ function UpdateLaneButtons()
     for _, button in ipairs(LaneButtons) do
         button.Visible = false
     end
+
     for laneIndex, _ in ipairs(Data) do
         for buttonNumber, button in ipairs(LaneButtons) do
             if buttonNumber == laneIndex then
                 button.Visible = true
                 button.Activated:Connect(function()
-                    LaneButtonActivated(buttonNumber)
+                    LaneButtonPressed(buttonNumber)
                 end)
             end
         end
     end
 end
 
-function LaneButtonActivated(LaneNumber)
+function LaneButtonPressed(LaneNumber)
     for buttonNumber, _ in ipairs(LaneButtons) do
         if buttonNumber == LaneNumber then
             CurrentTierFrame.Visible = true
             NextTierFrame.Visible = true
             UpgradeButton.Visible = true
             
-            UpdateTierFrames(LaneNumber)
+            UpdateInformation(LaneNumber)
         end
     end
 end
 
-function UpdateTierFrames(LaneNumber)
+function UpdateInformation(LaneNumber)
     for laneIndex, LaneType in ipairs(Data) do
         if laneIndex == LaneNumber then
+            local currentTierStats = LaneUpgrades.getTierInfo(LaneType)
             CurrentTierFrame.CurrentTierName.Text = LaneType
-            -- TODO: update all the texts in both CurrentTierFrame and NextTierFrame
+            CurrentTierFrame.StatsInfo.CooldownFrame.CooldownValue.Text = currentTierStats["CooldownDuration"]
+            CurrentTierFrame.StatsInfo.MultiplierFrame.MultiplierValue.Text = currentTierStats["BallValueMultiplier"]
+            
+            local nextTier = UpgradeOrder.getNextUpgradeTier("Lanes", LaneType)
+            local nextTierStats = LaneUpgrades.getTierInfo(nextTier)
+            NextTierFrame.NextTierName.Text = nextTier
+            NextTierFrame.StatsInfo.CooldownFrame.CooldownValue.Text = nextTierStats["CooldownDuration"]
+            NextTierFrame.StatsInfo.MultiplierFrame.MultiplierValue.Text = nextTierStats["BallValueMultiplier"]
             -- TODO: figure out a way to upgrade when button is sent
+            UpgradeButton.Text = "UPGRADE: $" .. nextTierStats["Cost"]
+
         end
     end
 end
@@ -84,10 +106,3 @@ function GetDescendantsOfClass(Parent, Type)
 
     return Table
 end
-
-closeLaneShopEvent.OnClientEvent:Connect(function()
-    LaneShopGui.FullScreenFill.Visible = false
-end)
-closeLaneButton.Activated:Connect(function()
-    LaneShopGui.FullScreenFill.Visible = false
-end)
