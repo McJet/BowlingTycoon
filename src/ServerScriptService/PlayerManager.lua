@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local DataStoreService = game:GetService("DataStoreService")
 local PlayerData = DataStoreService:GetDataStore("PlayerData")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 --[[ DEBUG VARIABLES ]]
 local RESET_DATA = false  --default: false, set to true to reset data of every player that joins
@@ -144,6 +145,8 @@ end
 function PlayerManager.GetLaneTypes(player)
 	return sessionData[player.UserId].LaneTypes
 end
+local UpdateLaneInfoEvent = ReplicatedStorage:WaitForChild("UpdateLaneInfoEvent")
+UpdateLaneInfoEvent.OnServerInvoke = PlayerManager.GetLaneTypes
 
 function PlayerManager.OnPlayerRemoving(player)
 	SaveData(player, sessionData[player.UserId])
