@@ -1,8 +1,8 @@
 local ballsFolder = game:GetService("ServerStorage").Balls
 local debris = game:GetService("Debris")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local LaneUpgrades = require(ReplicatedStorage.Source.LaneUpgrades)
-local UpgradeOrder = require(ReplicatedStorage.Source.UpgradeOrder)
+local ServerScriptService = game:GetService("ServerScriptService")
+local LaneUpgrades = require(ServerScriptService.Source.UpgradeInfo.LaneUpgrades)
+local UpgradeOrder = require(ServerScriptService.Source.UpgradeInfo.UpgradeOrder)
 local PlayerManager = require(script.Parent.Parent.PlayerManager)
 
 
@@ -65,8 +65,8 @@ end
 
 function Lane:UpgradeLane(laneNumber, player)
 	if laneNumber == self.LaneNumber then
-		local nextLaneTier = UpgradeOrder.getNextUpgradeTier("Lanes", self.Instance:GetAttribute("LaneType"))
-		local nextLaneInfo = LaneUpgrades.getTierInfo(nextLaneTier)
+		local nextLaneTier = UpgradeOrder.GetNextUpgradeTier("Lanes", self.Instance:GetAttribute("LaneType"))
+		local nextLaneInfo = LaneUpgrades.GetTierInfo(nextLaneTier)
 		local upgradeCost = nextLaneInfo["Cost"]
 		local playerMoney = PlayerManager.GetMoney(player)
 	
@@ -95,7 +95,7 @@ function Lane:LoadLaneType(player)
 	local savedLaneType = savedLaneTypesList[self.LaneNumber]
 
 	if savedLaneType then
-		local laneInfo = LaneUpgrades.getTierInfo(savedLaneType)
+		local laneInfo = LaneUpgrades.GetTierInfo(savedLaneType)
 		self:SetLaneAttributes(savedLaneType, laneInfo["BallValueMultiplier"], laneInfo["CooldownDuration"])
 	end
 end

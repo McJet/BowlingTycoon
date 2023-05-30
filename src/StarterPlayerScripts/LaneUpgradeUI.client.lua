@@ -1,8 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
-local UpdateLaneInfoEvent = ReplicatedStorage:WaitForChild("UpdateLaneInfoEvent")
-local LaneUpgrades = require(ReplicatedStorage.Source.LaneUpgrades)
-local UpgradeOrder = require(ReplicatedStorage.Source.UpgradeOrder)
+local GetPlayerLanesEvent = ReplicatedStorage:WaitForChild("GetPlayerLanesEvent")
+local OpenLaneShopEvent = ReplicatedStorage:WaitForChild("OpenLaneShopEvent")
+local CloseLaneShopEvent = ReplicatedStorage:WaitForChild("CloseLaneShopEvent")
+local GetLaneTierDataEvent = ReplicatedStorage:WaitForChild("GetLaneTierDataEvent")
 
 local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 local LaneShopGui = PlayerGui:WaitForChild("LaneShopGui")
@@ -12,16 +13,13 @@ local NextTierFrame = LaneShopGui.FullScreenFill.UpgradeShop.NextTierFrame
 local LaneSelectorFrame = LaneShopGui.FullScreenFill.UpgradeShop.LaneSelectorFrame
 local UpgradeButton = LaneShopGui.FullScreenFill.UpgradeShop.UpgradeButton
 
-local openLaneShopEvent = ReplicatedStorage:WaitForChild("OpenLaneShopEvent")
-local closeLaneShopEvent = ReplicatedStorage:WaitForChild("CloseLaneShopEvent")
-
-local Data = {}
+local PlayerLanes = {}
 local LaneButtons = {}
 
 LaneShopGui.FullScreenFill.Visible = false
 
-openLaneShopEvent.OnClientEvent:Connect(function()
-    Data = GetLaneInformation()
+OpenLaneShopEvent.OnClientEvent:Connect(function()
+    PlayerLanes = GetPlayerLanes()
     LaneButtons = GetDescendantsOfClass(LaneSelectorFrame, "TextButton")
     UpdateLaneButtons()
 
@@ -32,7 +30,7 @@ openLaneShopEvent.OnClientEvent:Connect(function()
     LaneShopGui.FullScreenFill.Visible = true
 end)
 
-closeLaneShopEvent.OnClientEvent:Connect(function()
+CloseLaneShopEvent.OnClientEvent:Connect(function()
     LaneShopGui.FullScreenFill.Visible = false
 end)
 
@@ -40,9 +38,8 @@ closeLaneButton.Activated:Connect(function()
     LaneShopGui.FullScreenFill.Visible = false
 end)
 
-function GetLaneInformation()
-    local info = UpdateLaneInfoEvent:InvokeServer()
-
+function GetPlayerLanes()
+    local info = GetPlayerLanesEvent:InvokeServer()
     return info
 end
 
@@ -51,7 +48,7 @@ function UpdateLaneButtons()
         button.Visible = false
     end
 
-    for laneIndex, _ in ipairs(Data) do
+    for laneIndex, _ in ipairs(PlayerLanes) do
         for buttonNumber, button in ipairs(LaneButtons) do
             if buttonNumber == laneIndex then
                 button.Visible = true
@@ -76,21 +73,21 @@ function LaneButtonPressed(LaneNumber)
 end
 
 function UpdateInformation(LaneNumber)
-    for laneIndex, LaneType in ipairs(Data) do
+    for laneIndex, LaneType in ipairs(PlayerLanes) do
         if laneIndex == LaneNumber then
-            local currentTierStats = LaneUpgrades.getTierInfo(LaneType)
+            local tierData = GetLaneTierDataEvent:InvokeServer(LaneType)
+
+            local currentTierStats = tierData["CurrentTier"]
             CurrentTierFrame.CurrentTierName.Text = LaneType
-            CurrentTierFrame.StatsInfo.CooldownFrame.CooldownValue.Text = currentTierStats["CooldownDuration"]
-            CurrentTierFrame.StatsInfo.MultiplierFrame.MultiplierValue.Text = currentTierStats["BallValueMultiplier"]
+            CurrentTierFrame.StatsInfo.CooldownFrame.CooldownValue.Text = currentTierStats["CooldownDuration"] .. " sec"
+            CurrentTierFrame.StatsInfo.MultiplierFrame.MultiplierValue.Text = currentTierStats["BallValueMultiplier"] .. "x"
             
-            local nextTier = UpgradeOrder.getNextUpgradeTier("Lanes", LaneType)
-            local nextTierStats = LaneUpgrades.getTierInfo(nextTier)
-            NextTierFrame.NextTierName.Text = nextTier
-            NextTierFrame.StatsInfo.CooldownFrame.CooldownValue.Text = nextTierStats["CooldownDuration"]
-            NextTierFrame.StatsInfo.MultiplierFrame.MultiplierValue.Text = nextTierStats["BallValueMultiplier"]
+            local nextTierStats = tierData["NextTier"]
+            NextTierFrame.NextTierName.Text = tierData["NextTierName"]
+            NextTierFrame.StatsInfo.CooldownFrame.CooldownValue.Text = nextTierStats["CooldownDuration"] .. " sec"
+            NextTierFrame.StatsInfo.MultiplierFrame.MultiplierValue.Text = nextTierStats["BallValueMultiplier"] .. "x"
             -- TODO: figure out a way to upgrade when button is sent
             UpgradeButton.Text = "UPGRADE: $" .. nextTierStats["Cost"]
-
         end
     end
 end

@@ -46,7 +46,7 @@ local UpgradeOrder = {
     }
 }
 
-function UpgradeOrder.getNextUpgradeTier(type, currentTier)
+function UpgradeOrder.GetNextUpgradeTier(type, currentTier)
     local currentTierIndex = -1
     if UpgradeOrder[type] then
         for index, tier in ipairs(UpgradeOrder[type]) do

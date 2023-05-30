@@ -145,8 +145,8 @@ end
 function PlayerManager.GetLaneTypes(player)
 	return sessionData[player.UserId].LaneTypes
 end
-local UpdateLaneInfoEvent = ReplicatedStorage:WaitForChild("UpdateLaneInfoEvent")
-UpdateLaneInfoEvent.OnServerInvoke = PlayerManager.GetLaneTypes
+local GetPlayerLanesEvent = ReplicatedStorage:WaitForChild("GetPlayerLanesEvent")
+GetPlayerLanesEvent.OnServerInvoke = PlayerManager.GetLaneTypes
 
 function PlayerManager.OnPlayerRemoving(player)
 	SaveData(player, sessionData[player.UserId])
