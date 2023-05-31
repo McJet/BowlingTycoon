@@ -4,7 +4,7 @@ local UpgradeOrder = require(script.Parent.UpgradeOrder)
 
 local GetLaneTierDataEvent = ReplicatedStorage:WaitForChild("GetLaneTierDataEvent")
 
-local function GetLaneTierData(player, LaneTier)
+local function GetLaneTierData(_, LaneTier)
     local data = {
         ["CurrentTier"] = {},
         ["NextTier"] = {}

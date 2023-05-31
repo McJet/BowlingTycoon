@@ -4,6 +4,7 @@ local GetPlayerLanesEvent = ReplicatedStorage:WaitForChild("GetPlayerLanesEvent"
 local OpenLaneShopEvent = ReplicatedStorage:WaitForChild("OpenLaneShopEvent")
 local CloseLaneShopEvent = ReplicatedStorage:WaitForChild("CloseLaneShopEvent")
 local GetLaneTierDataEvent = ReplicatedStorage:WaitForChild("GetLaneTierDataEvent")
+local BuyButtonPressedEvent = ReplicatedStorage:WaitForChild("BuyButtonPressedEvent")
 
 local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 local LaneShopGui = PlayerGui:WaitForChild("LaneShopGui")
@@ -15,19 +16,13 @@ local UpgradeButton = LaneShopGui.FullScreenFill.UpgradeShop.UpgradeButton
 
 local PlayerLanes = {}
 local LaneButtons = {}
+local LaneSelected = nil
+local isUIOpen = false
 
 LaneShopGui.FullScreenFill.Visible = false
 
 OpenLaneShopEvent.OnClientEvent:Connect(function()
-    PlayerLanes = GetPlayerLanes()
-    LaneButtons = GetDescendantsOfClass(LaneSelectorFrame, "TextButton")
-    UpdateLaneButtons()
-
-    CurrentTierFrame.Visible = false
-    NextTierFrame.Visible = false
-    UpgradeButton.Visible = false
-
-    LaneShopGui.FullScreenFill.Visible = true
+    onLaneUpgradeUIOpen()
 end)
 
 CloseLaneShopEvent.OnClientEvent:Connect(function()
@@ -37,6 +32,18 @@ end)
 closeLaneButton.Activated:Connect(function()
     LaneShopGui.FullScreenFill.Visible = false
 end)
+
+function onLaneUpgradeUIOpen()
+    PlayerLanes = GetPlayerLanes()
+    LaneButtons = GetDescendantsOfClass(LaneSelectorFrame, "TextButton")
+    UpdateLaneButtons()
+
+    CurrentTierFrame.Visible = false
+    NextTierFrame.Visible = false
+    UpgradeButton.Visible = false
+
+    LaneShopGui.FullScreenFill.Visible = true
+end
 
 function GetPlayerLanes()
     local info = GetPlayerLanesEvent:InvokeServer()
@@ -54,6 +61,7 @@ function UpdateLaneButtons()
                 button.Visible = true
                 button.Activated:Connect(function()
                     LaneButtonPressed(buttonNumber)
+                    LaneSelected = buttonNumber
                 end)
             end
         end
@@ -63,11 +71,15 @@ end
 function LaneButtonPressed(LaneNumber)
     for buttonNumber, _ in ipairs(LaneButtons) do
         if buttonNumber == LaneNumber then
+            UpdateInformation(LaneNumber)
+
+            UpgradeButton.Activated:Connect(function()
+                onUpgradeButtonPressed(LaneSelected)
+            end)
+
             CurrentTierFrame.Visible = true
             NextTierFrame.Visible = true
             UpgradeButton.Visible = true
-            
-            UpdateInformation(LaneNumber)
         end
     end
 end
@@ -86,10 +98,16 @@ function UpdateInformation(LaneNumber)
             NextTierFrame.NextTierName.Text = tierData["NextTierName"]
             NextTierFrame.StatsInfo.CooldownFrame.CooldownValue.Text = nextTierStats["CooldownDuration"] .. " sec"
             NextTierFrame.StatsInfo.MultiplierFrame.MultiplierValue.Text = nextTierStats["BallValueMultiplier"] .. "x"
-            -- TODO: figure out a way to upgrade when button is sent
             UpgradeButton.Text = "UPGRADE: $" .. nextTierStats["Cost"]
         end
     end
+end
+
+--FIXME: when you upgrade, close ui, then open back up, upgrade runs more times than needed.
+--FIXME: when upgrade button is pressed, information appears to not update
+function onUpgradeButtonPressed(LaneNumber)
+    BuyButtonPressedEvent:FireServer(LaneNumber)
+    UpdateInformation(LaneNumber)
 end
 
 function GetDescendantsOfClass(Parent, Type)

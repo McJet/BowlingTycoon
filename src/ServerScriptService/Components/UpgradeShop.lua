@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local BuyButtonPressedEvent = ReplicatedStorage:WaitForChild("BuyButtonPressedEvent")
 
 local UpgradeShop = {}
 UpgradeShop.__index = UpgradeShop
@@ -19,6 +20,12 @@ function UpgradeShop:Init()
 
 	self.prompt.Triggered:Connect(function(player)
 		self.openEvent:FireClient(player)
+	end)
+
+	BuyButtonPressedEvent.OnServerEvent:Connect(function(player, LaneNumber)
+		if self.UpgradeType == "Lane" then
+			self:UpgradeLane(player, LaneNumber)
+		end
 	end)
 
 	--FIXME: close shop when player moves away from the shop

@@ -1,48 +1,103 @@
 local LaneUpgrades = {
     ["Wood"] = {
-        ["Cost"] = 0,
         ["BallValueMultiplier"] = 1,
         ["CooldownDuration"] = 5
     },
     ["Stone"] = {
-        ["Cost"] = 10,
+        ["Cost"] = 100,
         ["BallValueMultiplier"] = 2,
         ["CooldownDuration"] = 5
     },
     ["Brick"] = {
-        ["Cost"] = 20,
+        ["Cost"] = 200,
         ["BallValueMultiplier"] = 3,
         ["CooldownDuration"] = 4
     },
     ["Concrete"] = {
-        ["Cost"] = 30,
+        ["Cost"] = 300,
         ["BallValueMultiplier"] = 4,
         ["CooldownDuration"] = 3
     },
     ["Asphalt"] = {
-        ["Cost"] = 40,
+        ["Cost"] = 400,
         ["BallValueMultiplier"] = 5,
         ["CooldownDuration"] = 2
     },
     ["Marble"] = {
-        ["Cost"] = 50,
+        ["Cost"] = 500,
         ["BallValueMultiplier"] = 6,
         ["CooldownDuration"] = 1
     },
-    ["Rust"] = {},
-    ["Iron"] = {},
-    ["Bronze"] = {},
-    ["Silver"] = {},
-    ["Gold"] = {},
-    ["Platinum"] = {},
-    ["Quarts"] = {},
-    ["Tanzanite"] = {},
-    ["Emerald"] = {},
-    ["Ruby"] = {},
-    ["Diamond"] = {},
-    ["Neon"] = {},
-    ["Plasma"] = {},
-    ["Developer"] = {}
+    ["Rust"] = {
+        ["Cost"] = 500,
+        ["BallValueMultiplier"] = 6,
+        ["CooldownDuration"] = 1
+    },
+    ["Iron"] = {
+        ["Cost"] = 500,
+        ["BallValueMultiplier"] = 6,
+        ["CooldownDuration"] = 1
+    },
+    ["Bronze"] = {
+        ["Cost"] = 500,
+        ["BallValueMultiplier"] = 6,
+        ["CooldownDuration"] = 1
+    },
+    ["Silver"] = {
+        ["Cost"] = 500,
+        ["BallValueMultiplier"] = 6,
+        ["CooldownDuration"] = 1
+    },
+    ["Gold"] = {
+        ["Cost"] = 500,
+        ["BallValueMultiplier"] = 6,
+        ["CooldownDuration"] = 1
+    },
+    ["Platinum"] = {
+        ["Cost"] = 500,
+        ["BallValueMultiplier"] = 6,
+        ["CooldownDuration"] = 1
+    },
+    ["Quarts"] = {
+        ["Cost"] = 500,
+        ["BallValueMultiplier"] = 6,
+        ["CooldownDuration"] = 1
+    },
+    ["Tanzanite"] = {
+        ["Cost"] = 500,
+        ["BallValueMultiplier"] = 6,
+        ["CooldownDuration"] = 1
+    },
+    ["Emerald"] = {
+        ["Cost"] = 500,
+        ["BallValueMultiplier"] = 6,
+        ["CooldownDuration"] = 1
+    },
+    ["Ruby"] = {
+        ["Cost"] = 500,
+        ["BallValueMultiplier"] = 6,
+        ["CooldownDuration"] = 1
+    },
+    ["Diamond"] = {
+        ["Cost"] = 500,
+        ["BallValueMultiplier"] = 6,
+        ["CooldownDuration"] = 1
+    },
+    ["Neon"] = {
+        ["Cost"] = 500,
+        ["BallValueMultiplier"] = 6,
+        ["CooldownDuration"] = 1
+    },
+    ["Plasma"] = {
+        ["Cost"] = 500,
+        ["BallValueMultiplier"] = 6,
+        ["CooldownDuration"] = 1
+    },
+    ["Developer"] = {
+        ["Cost"] = 500,
+        ["BallValueMultiplier"] = 6,
+        ["CooldownDuration"] = 1
+    }
 }
 
 function LaneUpgrades.GetTierInfo(name)
